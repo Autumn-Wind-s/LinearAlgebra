@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="it.mapper.AnswerMapper">
+    <resultMap id="answerMap" type="it.domain.Answer">
+        <result column="aid" property="aid"></result>
+        <result column="text" property="text"></result>
+        <result column="publishtime" property="publishtime"></result>
+        <result column="qid" property="question.qid"></result>
+        <result column="questionName" property="question.questionName"></result>
+        <result column="uploadTime" property="question.uploadTime"></result>
+        <result column="text1" property="question.text"></result>
+        <result column="uid" property="user.uid"></result>
+        <result column="userName" property="user.username"></result>
+        <result column="permissions" property="user.permissions"></result>
+    </resultMap>
+    <select id="findNewest" resultMap="answerMap">
+        select * from answer a left join question q ON a.qid=q.qid
+                               left join user u on a.uid =u.uid
+        ORDER BY publishtime desc LIMIT 0,4
+    </select>
+    <select id="countByDate" parameterType="cn.hutool.core.date.DateTime" resultType="int">
+        select count(*)
+        FROM answer
+        where publishtime > #{time};
+    </select>
+    <select id="countAll" resultType="int">
+        select count(*) from answer
+    </select>
+<select id="findByQid" resultMap="answerMap">
+    select * from answer a left join question q ON a.qid=q.qid
+                           left join user u on a.uid =u.uid  where a.qid=#{qid}  ORDER BY publishtime DESC
+</select>
+ <update id="addAnswer" parameterType="answer">
+     insert into answer(uid,qid,text,publishtime) values (#{user.uid},#{question.qid},#{text},#{publishtime})
+ </update>
+  <select id="findByUid" resultMap="answerMap">
+      select * from answer a left join question q ON a.qid=q.qid
+                             left join user u on a.uid =u.uid  where a.uid=#{uid}
+  </select>
+    <select id="findAll" resultMap="answerMap">
+        select * from answer a left join question q ON a.qid=q.qid
+                               left join user u on a.uid =u.uid
+    </select>
+    <update id="deleteByAid">
+        delete  from answer where aid=#{aid}
+    </update>
+</mapper>

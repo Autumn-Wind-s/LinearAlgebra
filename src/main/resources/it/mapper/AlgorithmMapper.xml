@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="it.mapper.AlgorithmMapper">
+    <resultMap id="algorithmMap" type="it.domain.Algorithm">
+        <result column="uid" property="user.uid"></result>
+        <result column="username" property="user.username"></result>
+        <result column="password" property="user.password"></result>
+        <result column="status" property="user.status"></result>
+        <result column="email" property="user.email"></result>
+        <result column="permissions" property="user.permissions"></result>
+    </resultMap>
+    <select id="findAlgorithmPage" resultMap="algorithmMap" parameterType="int">
+        select * FROM algorithm,user
+        <where>
+            <if test="1">
+                and algorithm.uid=user.uid
+            </if>
+            <if test="uid!=0">
+                and algorithm.uid=#{uid}
+            </if>
+        </where>
+
+     </select>
+    <update id="updateAlgorithm" parameterType="algorithm" >
+        update  algorithm set algorithmName=#{algorithmName},text=#{text} where aid=#{aid}
+    </update>
+    <delete id="deleteByAid" parameterType="algorithm">
+        delete from algorithm where aid=#{aid}
+    </delete>
+    <insert id="addAlgorithm" parameterType="algorithm">
+        insert into algorithm(uid,algorithmName,text) values(#{user.uid},#{algorithmName},#{text})
+    </insert>
+    <select id="findByKeyWord" resultMap="algorithmMap" parameterType="String">
+        select * from algorithm,user where algorithm.uid=user.uid and algorithmName like concat('%',#{key},'%')
+    </select>
+</mapper>
